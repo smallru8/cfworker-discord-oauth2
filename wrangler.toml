@@ -1,0 +1,23 @@
+name = "sku-oauth-app"
+compatibility_date = "2024-08-18"
+compatibility_flags = [ "nodejs_compat" ]
+
+[triggers]
+# every 30th minutes
+crons = ["*/30 * * * *"]
+
+[vars]
+ISS_DOMAIN = ""
+DC_CLIENT_ID = ""
+DC_CLIENT_SECRET = ""
+DC_REDIRECT_URI = ""
+DC_ADMIN_ROLE = ""
+
+[[kv_namespaces]]
+binding = "KV"
+id = "2c38c2cd022f406598654e9aae1eb2b9"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sku_auth"
+database_id = "d9973739-bdc0-4694-bfc7-c218b2caa061"
