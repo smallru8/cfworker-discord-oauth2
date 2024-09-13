@@ -19,7 +19,7 @@ hono_discord.get('/callback', async (c) => {
     }
 
     let { results } = await c.env.DB.prepare(
-        "SELECT oidc_req_tmp.oidc_state_hash oidc_req_tmp.oidc_state oidc_req_tmp.client_id oidc_req_tmp.redirect_uri oidc_req_tmp.code oidc_req_tmp.datr oidc_req_tmp.created_at oidc_client.scope FROM oidc_req_tmp INNER JOIN oidc_client ON oidc_req_tmp.client_id=oidc_client.client_id WHERE oidc_req_tmp.oidc_state_hash = ?",
+        "SELECT oidc_req_tmp.oidc_state_hash, oidc_req_tmp.oidc_state, oidc_req_tmp.client_id, oidc_req_tmp.redirect_uri, oidc_req_tmp.code, oidc_req_tmp.datr, oidc_req_tmp.created_at, oidc_client.scope FROM oidc_req_tmp INNER JOIN oidc_client ON oidc_req_tmp.client_id=oidc_client.client_id WHERE oidc_req_tmp.oidc_state_hash = ?",
       )
     .bind(oidc_state_hash)
     .all();
