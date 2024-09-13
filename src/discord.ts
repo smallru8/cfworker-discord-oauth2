@@ -43,7 +43,9 @@ hono_discord.get('/callback', async (c) => {
     //Discord user guilds (id list)
     const discord_userguilds_arr = await discord_api.user_guilds(discord_token_res["access_token"])
 
-    let white_list = discord_guild_role_whitelist(discord_userguilds_arr, Array.from(new Set((results[0].scope as string).split(" "))))
+    let scopes = results[0].scope as string
+    console.log(scopes)//debug
+    let white_list = discord_guild_role_whitelist(discord_userguilds_arr, Array.from(new Set(scopes.split(" "))))
 
     //check roles
     let passed = false
