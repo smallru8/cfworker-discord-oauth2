@@ -18,7 +18,7 @@ jobs:
           CF_D1_NAME: ${{ vars.CF_D1_NAME }}
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: d1 execute ${{ env.CF_KV_ID }} --remote --file=schema.sql
+          command: d1 execute ${{ env.CF_D1_NAME }} --remote --file=schema.sql
   deploy:
     needs: migrate
     runs-on: ubuntu-latest
