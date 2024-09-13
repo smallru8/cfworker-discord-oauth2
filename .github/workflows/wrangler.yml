@@ -42,10 +42,10 @@ jobs:
           preCommands: |
             echo "" >> wrangler.toml
             echo "[vars]" >>  wrangler.toml
-            echo "ISS_DOMAIN = ${{ env.ISS_DOMAIN }}" >>  wrangler.toml
-            echo "DC_CLIENT_ID = ${{ env.DC_CLIENT_ID }}" >>  wrangler.toml
-            echo "DC_CLIENT_SECRET = ${{ env.DC_CLIENT_SECRET }}" >>  wrangler.toml
-            echo "DC_REDIRECT_URI = ${{ env.DC_REDIRECT_URI }}" >>  wrangler.toml
+            echo "ISS_DOMAIN = \"${{ env.ISS_DOMAIN }}\"" >>  wrangler.toml
+            echo "DC_CLIENT_ID = \"${{ env.DC_CLIENT_ID }}\"" >>  wrangler.toml
+            echo "DC_CLIENT_SECRET = \"${{ env.DC_CLIENT_SECRET }}\"" >>  wrangler.toml
+            echo "DC_REDIRECT_URI = \"${{ env.DC_REDIRECT_URI }}\"" >>  wrangler.toml
             echo "[[kv_namespaces]]" >>  wrangler.toml
             echo 'binding = "KV"' >>  wrangler.toml
             echo 'id = "'${{ env.CF_KV_ID }}'"' >>  wrangler.toml
