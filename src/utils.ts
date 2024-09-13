@@ -94,6 +94,11 @@ export function discord_guild_role_whitelist(user_guilds:string[], scopes:string
         return item.indexOf("dcmg_") == 0;
     });
     
+    if(scopes.length == 0){//whitelist not set return {"0":[]}
+        white_list["0"] = []
+        return white_list;
+    }
+
     scopes.forEach((ele) => {
         let g_r = ele.replaceAll("dcmg_","").split("_")
         if(user_guilds.includes(g_r[0])){

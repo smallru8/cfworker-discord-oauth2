@@ -42,20 +42,25 @@ hono_discord.get('/callback', async (c) => {
 
     //Discord user guilds (id list)
     const discord_userguilds_arr = await discord_api.user_guilds(discord_token_res["access_token"])
-    console.log(discord_userguilds_arr)//debug
+    //console.log(discord_userguilds_arr)//debug
     let scopes = results[0].scope as string
-    console.log(scopes)//debug
+    //console.log(scopes)//debug
     let white_list = discord_guild_role_whitelist(discord_userguilds_arr, Array.from(new Set(scopes.split(" "))))
-    console.log(white_list)//debug
+    //console.log(white_list)//debug
+    
     //check roles
     let passed = false
-    for(var i=0;i<discord_userguilds_arr.length;i++){
-        if(discord_userguilds_arr[i] in white_list){
-            let tmp_gid = discord_userguilds_arr[i]
-            let check_res = await discord_api.check_user_role(discord_token_res["access_token"],tmp_gid,white_list[tmp_gid])
-            if(check_res!==null){
-                passed = true
-                break
+    if("0" in white_list){//whitelist not set passed
+        passed = true
+    }else{
+        for(var i=0;i<discord_userguilds_arr.length;i++){
+            if(discord_userguilds_arr[i] in white_list){
+                let tmp_gid = discord_userguilds_arr[i]
+                let check_res = await discord_api.check_user_role(discord_token_res["access_token"],tmp_gid,white_list[tmp_gid])
+                if(check_res!==null){
+                    passed = true
+                    break
+                }
             }
         }
     }
