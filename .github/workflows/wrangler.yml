@@ -1,0 +1,54 @@
+name: Wrangler Deploy
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    name: Migrate
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        env:
+          CF_D1_NAME: ${{ vars.CF_D1_NAME }}
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: d1 execute ${{ env.CF_KV_ID }} --remote --file=schema.sql
+  deploy:
+    needs: migrate
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        env:
+          ISS_DOMAIN: ${{ vars.ISS_DOMAIN }}
+          DC_CLIENT_ID: ${{ vars.DC_CLIENT_ID }}
+          DC_CLIENT_SECRET: ${{ secrets.DC_CLIENT_SECRET }}
+          DC_REDIRECT_URI: https://${{ vars.ISS_DOMAIN }}/discord/callback
+          CF_KV_ID: ${{ vars.CF_KV_ID }}
+          CF_D1_NAME: ${{ vars.CF_D1_NAME }}
+          CF_D1_ID: ${{ vars.CF_D1_ID }}
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          preCommands: |
+            echo "" >> wrangler.toml
+            echo "[vars]" >>  wrangler.toml
+            echo "ISS_DOMAIN = ${{ env.ISS_DOMAIN }}" >>  wrangler.toml
+            echo "DC_CLIENT_ID = ${{ env.DC_CLIENT_ID }}" >>  wrangler.toml
+            echo "DC_CLIENT_SECRET = ${{ env.DC_CLIENT_SECRET }}" >>  wrangler.toml
+            echo "DC_REDIRECT_URI = ${{ env.DC_REDIRECT_URI }}" >>  wrangler.toml
+            echo "[[kv_namespaces]]" >>  wrangler.toml
+            echo 'binding = "KV"' >>  wrangler.toml
+            echo 'id = "'${{ env.CF_KV_ID }}'"' >>  wrangler.toml
+            echo "[[d1_databases]]" >> wrangler.toml
+            echo 'binding = "DB"' >> wrangler.toml
+            echo 'database_name = "'${{ env.CF_D1_NAME }}'"' >> wrangler.toml
+            echo 'database_id = "'${{ env.CF_D1_ID }}'"' >> wrangler.toml
+          command: deploy
