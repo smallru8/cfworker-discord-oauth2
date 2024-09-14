@@ -7,6 +7,8 @@ import hono_well_known from './well_known'
 
 const hono_oidc = new Hono<{ Bindings: Bindings }>()
 
+/*==========================================*/
+// OAUTH2
 /**
  * redirect to discord oauth
  */
@@ -69,7 +71,7 @@ hono_oidc.get('/auth', async (c) => {
 hono_oidc.post('/token', async (c) => {
     const body = await c.req.parseBody()
     const http_auth = c.req.header("Authorization")
-    
+
     var client_id:string | undefined
     var client_secret:string | undefined
 
@@ -132,6 +134,7 @@ hono_oidc.post('/token', async (c) => {
             email: userinfo['email'],
             global_name: userinfo['global_name'],
             name: displayName,
+            is_admin: c.env.DC_ADMIN_IDS.split(" ").includes(userinfo["id"]),
         })
         .setProtectedHeader({ alg: 'RS256' })
 		.setExpirationTime('2h')
@@ -151,7 +154,6 @@ hono_oidc.post('/token', async (c) => {
     }
 })
 /*==========================================*/
-
 hono_well_known.get('/jwks.json', async (c) => {
     let publicKey = (await loadKeyPair(c.env.KV)).publicKey
 	return c.json({
@@ -185,7 +187,8 @@ hono_well_known.get('/openid-configuration', async (c) => {
             "username",
             "discriminator",
             "avatar",
-            "preferred_username"
+            "preferred_username",
+            "is_admin"
         ]
 	})
 })

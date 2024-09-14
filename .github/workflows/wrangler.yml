@@ -15,10 +15,14 @@ jobs:
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         env:
+          ISS_DOMAIN: ${{ vars.ISS_DOMAIN }}
           CF_D1_NAME: ${{ vars.CF_D1_NAME }}
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "3.78.2"
+          preCommands: |
+            echo "" >> schema.sql
+            echo "INSERT IGNORE INTO oidc_client (client_id,client_secret,owner_id,scope,redirect_uri) VALUES (UUID(),MD5(RAND()),\"0\",\"identify email guilds guilds.members.read\",\"https://${{ env.ISS_DOMAIN }}/sample\");" >> schema.sql
           command: d1 execute ${{ env.CF_D1_NAME }} --remote --file=schema.sql
   deploy:
     needs: migrate
@@ -33,6 +37,7 @@ jobs:
           DC_CLIENT_ID: ${{ vars.DC_CLIENT_ID }}
           DC_CLIENT_SECRET: ${{ secrets.DC_CLIENT_SECRET }}
           DC_REDIRECT_URI: https://${{ vars.ISS_DOMAIN }}/discord/callback
+          DC_ADMIN_IDS: ${{ vars.DC_ADMIN_IDS }}
           CF_KV_ID: ${{ vars.CF_KV_ID }}
           CF_D1_NAME: ${{ vars.CF_D1_NAME }}
           CF_D1_ID: ${{ vars.CF_D1_ID }}
@@ -46,6 +51,7 @@ jobs:
             echo "DC_CLIENT_ID = \"${{ env.DC_CLIENT_ID }}\"" >>  wrangler.toml
             echo "DC_CLIENT_SECRET = \"${{ env.DC_CLIENT_SECRET }}\"" >>  wrangler.toml
             echo "DC_REDIRECT_URI = \"${{ env.DC_REDIRECT_URI }}\"" >>  wrangler.toml
+            echo "DC_ADMIN_IDS = \"${{ env.DC_ADMIN_IDS }}\"" >>  wrangler.toml
             echo "[[kv_namespaces]]" >>  wrangler.toml
             echo 'binding = "KV"' >>  wrangler.toml
             echo 'id = "'${{ env.CF_KV_ID }}'"' >>  wrangler.toml

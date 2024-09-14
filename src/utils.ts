@@ -30,6 +30,7 @@ export type Bindings = {
     DC_CLIENT_ID: string
     DC_REDIRECT_URI: string
     DC_CLIENT_SECRET: string
+    DC_ADMIN_IDS: string
 }
 
 const algorithm = {

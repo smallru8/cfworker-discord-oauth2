@@ -18,3 +18,5 @@ CREATE TABLE IF NOT EXISTS oidc_req_tmp (
     PRIMARY KEY (oidc_state_hash),
     FOREIGN KEY(client_id) REFERENCES oidc_client(client_id) ON DELETE CASCADE
 );
+
+--INSERT IGNORE INTO oidc_client (client_id,client_secret,owner_id,scope,redirect_uri) VALUES (UUID(),MD5(RAND()),"0","identify email guilds guilds.members.read","https://");

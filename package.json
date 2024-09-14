@@ -7,11 +7,13 @@
   "dependencies": {
     "hono": "^4.5.6",
     "jose": "^5.6.3",
-    "js-base64": "^3.7.7"
+    "js-base64": "^3.7.7",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
     "@types/basic-auth": "^1.1.8",
+    "@types/jsonwebtoken": "^9.0.6",
     "basic-auth": "^2.0.1",
     "wrangler": "^3.78.2"
   }
