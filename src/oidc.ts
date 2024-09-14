@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import * as jose from 'jose'
+import * as basic_auth from 'basic-auth'
 import { loadKeyPair, ErrMessage, Bindings, hash_sha_256, discord_guild_role_whitelist } from './utils'
 import * as discord_api from './api/discord'
 import hono_well_known from './well_known'
@@ -67,15 +68,32 @@ hono_oidc.get('/auth', async (c) => {
 
 hono_oidc.post('/token', async (c) => {
     const body = await c.req.parseBody()
-    const client_id = (body['client_id'] as string)
+    const http_auth = c.req.header("Authorization")
+    
+    var client_id:string | undefined
+    var client_secret:string | undefined
+
+    if(http_auth){//client_secret_basic
+        let credentials = basic_auth.parse(http_auth)
+        client_id = credentials?.name
+        client_secret = credentials?.pass
+    }else{//client_secret_post
+        client_id = (body['client_id'] as string)
+        client_secret = (body['client_secret'] as string)
+    }
+
+    if(!client_id || !client_secret){
+        return c.json(new ErrMessage("auth error","client_id or client_secret not found").dict(), 400)
+    }
+
     const code = (body['code'] as string)
     const grant_type = body['grant_type']
     const redirect_uri = body['redirect_uri']
 
     let { results } = await c.env.DB.prepare(
-        "SELECT T1.client_id, T1.scope, T2.code, T2.datr FROM (SELECT * FROM oidc_client WHERE client_id = ?) AS T1 INNER JOIN (SELECT * FROM oidc_req_tmp WHERE client_id = ? AND code = ?) AS T2 ON T1.client_id=T2.client_id;",
+        "SELECT T1.client_id, T1.scope, T2.code, T2.datr FROM (SELECT * FROM oidc_client WHERE client_id = ? AND client_secret = ?) AS T1 INNER JOIN (SELECT * FROM oidc_req_tmp WHERE client_id = ? AND code = ?) AS T2 ON T1.client_id=T2.client_id;",
     )
-    .bind(client_id,client_id,code)
+    .bind(client_id,client_secret,client_id,code)
     .all();
 
     if(results.length == 0){

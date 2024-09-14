@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS oidc_client (
     client_id VARCHAR(50),
+    client_secret TEXT,
     owner_id VARCHAR(50),
     scope TEXT,
     redirect_uri TEXT,

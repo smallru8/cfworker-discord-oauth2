@@ -18,7 +18,7 @@ jobs:
           CF_D1_NAME: ${{ vars.CF_D1_NAME }}
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          wranglerVersion: "3.72.0"
+          wranglerVersion: "3.78.2"
           command: d1 execute ${{ env.CF_D1_NAME }} --remote --file=schema.sql
   deploy:
     needs: migrate
@@ -38,7 +38,7 @@ jobs:
           CF_D1_ID: ${{ vars.CF_D1_ID }}
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          wranglerVersion: "3.72.0"
+          wranglerVersion: "3.78.2"
           preCommands: |
             echo "" >> wrangler.toml
             echo "[vars]" >>  wrangler.toml

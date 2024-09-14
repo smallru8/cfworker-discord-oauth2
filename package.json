@@ -6,10 +6,13 @@
   },
   "dependencies": {
     "hono": "^4.5.6",
-    "jose": "^5.6.3"
+    "jose": "^5.6.3",
+    "js-base64": "^3.7.7"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
-    "wrangler": "^3.57.2"
+    "@types/basic-auth": "^1.1.8",
+    "basic-auth": "^2.0.1",
+    "wrangler": "^3.78.2"
   }
 }
