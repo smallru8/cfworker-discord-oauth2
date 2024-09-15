@@ -60,14 +60,16 @@ export async function check_user_role(access_token:string, guild_id:string, role
         if(role_id_allowed_ls.length == 0)
             return roles
 
-        let role_obj_ls:[] = (await member.json())["roles"]
-        console.log(role_obj_ls)//debug
+        let role_obj_ls:string[] = (await member.json())["roles"]
+        //console.log(role_obj_ls)//debug
+        /*
         let role_id_ls:string[] = []
         role_id_ls = role_obj_ls.map(item => {
             return item['id']
         })
+        */
         for(var i=0;i<role_id_allowed_ls.length;i++)
-            if(role_id_ls.includes(role_id_allowed_ls[i])){
+            if(role_obj_ls.includes(role_id_allowed_ls[i])){
                 roles.push(role_id_allowed_ls[i])
             }
         if(roles.length == 0){
