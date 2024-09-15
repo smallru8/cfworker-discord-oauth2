@@ -61,6 +61,7 @@ export async function check_user_role(access_token:string, guild_id:string, role
             return roles
 
         let role_obj_ls:[] = (await member.json())["roles"]
+        console.log(role_obj_ls)//debug
         let role_id_ls:string[] = []
         role_id_ls = role_obj_ls.map(item => {
             return item['id']
