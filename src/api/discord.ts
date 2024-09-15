@@ -1,12 +1,28 @@
+import { loadKeyPair, ErrMessage, Bindings, hash_func, discord_guild_role_whitelist } from '../utils'
 
-export async function oauth2_token(client_id: string, client_secret:string, redirect_uri:string, code:string){
-    const params = new URLSearchParams({
-		'client_id': client_id,
+export async function oauth2_token(client_id: string, client_secret:string, redirect_uri:string, code:string, grant_type:string="authorization_code"){
+    var params_dict
+    var params_gen_dict = {
+        'client_id': client_id,
         'client_secret': client_secret,
-        'grant_type': 'authorization_code',
-        'redirect_uri': redirect_uri,
-        'code': code
-	}).toString()
+        'grant_type': grant_type,
+    }
+    
+    if(grant_type==="authorization_code"){
+        params_dict = {
+            ...params_gen_dict,
+            'redirect_uri': redirect_uri,
+            'code': code
+        }
+    }else if(grant_type==="refresh_token"){
+        params_dict = {
+            ...params_gen_dict,
+            'refresh_token': code
+        }
+    }
+
+    const params = new URLSearchParams(params_dict).toString()
+
     const discord_token_res = await fetch('https://discord.com/api/v10/oauth2/token', {
 		method: 'POST',
 		body: params,
@@ -78,4 +94,33 @@ export async function check_user_role(access_token:string, guild_id:string, role
         return roles
     }
     return null
+}
+
+/**
+ * check if user has specific guilds and roles
+ * scope format: ```dcmg_<guild_id>_<role_id>```
+ * @param access_token 
+ * @param scopes 
+ * @returns 
+ */
+export async function discord_user_permission_verify(access_token:string, scopes:string){
+    //Discord user guilds (id list)
+    const discord_userguilds_arr = await user_guilds(access_token)
+    let white_list = discord_guild_role_whitelist(discord_userguilds_arr, Array.from(new Set(scopes.split(" "))))
+    let passed = false
+    if("0" in white_list){//whitelist not set passed
+        passed = true
+    }else{
+        for(var i=0;i<discord_userguilds_arr.length;i++){
+            if(discord_userguilds_arr[i] in white_list){
+                let tmp_gid = discord_userguilds_arr[i]
+                let check_res = check_user_role(access_token,tmp_gid,white_list[tmp_gid])
+                if(check_res!==null){
+                    passed = true
+                    break
+                }
+            }
+        }
+    }
+    return passed
 }

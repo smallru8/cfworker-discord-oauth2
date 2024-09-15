@@ -1,3 +1,4 @@
+import {Md5} from 'ts-md5'
 
 export class ErrMessage {
 
@@ -45,8 +46,8 @@ const importAlgo = {
 	hash: { name: 'SHA-256' },
 }
 
-export async function hash_sha_256(data:string){
-
+export function hash_func(data:string){
+    /*
     const myText = new TextEncoder().encode(data);
 
     const myDigest = await crypto.subtle.digest(
@@ -59,6 +60,8 @@ export async function hash_sha_256(data:string){
     .map(b => b.toString(16).padStart(2, '0'))
     .join('')
     return hexString
+    */
+    return Md5.hashStr(data)
 }
 
 export async function loadKeyPair(cf_kv: any) {

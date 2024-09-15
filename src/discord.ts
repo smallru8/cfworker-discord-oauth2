@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import * as jose from 'jose'
-import { loadKeyPair, ErrMessage, Bindings, hash_sha_256, discord_guild_role_whitelist } from './utils'
+import { loadKeyPair, ErrMessage, Bindings, hash_func, discord_guild_role_whitelist } from './utils'
 import * as discord_api from './api/discord'
 
 const hono_discord = new Hono<{ Bindings: Bindings }>()
@@ -40,30 +40,8 @@ hono_discord.get('/callback', async (c) => {
         return c.redirect(`${results[0].redirect_uri}?${new ErrMessage("discord callback error","discord access token response is null").params()}`)
     }
 
-    //Discord user guilds (id list)
-    const discord_userguilds_arr = await discord_api.user_guilds(discord_token_res["access_token"])
-    //console.log(discord_userguilds_arr)//debug
-    let scopes = results[0].scope as string
-    //console.log(scopes)//debug
-    let white_list = discord_guild_role_whitelist(discord_userguilds_arr, Array.from(new Set(scopes.split(" "))))
-    //console.log(white_list)//debug
-    
-    //check roles
-    let passed = false
-    if("0" in white_list){//whitelist not set passed
-        passed = true
-    }else{
-        for(var i=0;i<discord_userguilds_arr.length;i++){
-            if(discord_userguilds_arr[i] in white_list){
-                let tmp_gid = discord_userguilds_arr[i]
-                let check_res = await discord_api.check_user_role(discord_token_res["access_token"],tmp_gid,white_list[tmp_gid])
-                if(check_res!==null){
-                    passed = true
-                    break
-                }
-            }
-        }
-    }
+    //verify user's current discord guilds and roles
+    let passed = await discord_api.discord_user_permission_verify(discord_token_res["access_token"],results[0].scope as string)
 
     //DENY=================
 
