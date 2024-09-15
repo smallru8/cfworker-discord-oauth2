@@ -22,7 +22,7 @@ jobs:
           wranglerVersion: "3.78.2"
           preCommands: |
             echo "" >> schema.sql
-            echo "INSERT IGNORE INTO oidc_client (client_id,client_secret,owner_id,scope,redirect_uri) VALUES (UUID(),MD5(RAND()),\"0\",\"identify email guilds guilds.members.read\",\"https://${{ env.ISS_DOMAIN }}/sample\");" >> schema.sql
+            echo "INSERT OR IGNORE INTO oidc_client (client_id,client_secret,owner_id,scope,redirect_uri) VALUES (\"oauthsample\",lower(hex(randomblob(32))),\"0\",\"identify email guilds guilds.members.read\",\"https://${{ env.ISS_DOMAIN }}/sample\");" >> schema.sql
           command: d1 execute ${{ env.CF_D1_NAME }} --remote --file=schema.sql
   deploy:
     needs: migrate
