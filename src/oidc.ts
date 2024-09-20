@@ -227,6 +227,7 @@ hono_well_known.get('/openid-configuration', async (c) => {
 		issuer: `https://${c.env.ISS_DOMAIN}`,
         authorization_endpoint: `https://${c.env.ISS_DOMAIN}/oauth2/auth`,
         token_endpoint: `https://${c.env.ISS_DOMAIN}/oauth2/token`,
+        userinfo_endpoint: `https://discordapp.com/api/v10/users/@me`,
         jwks_uri: `https://${c.env.ISS_DOMAIN}/.well-known/jwks.json`,
         subject_types_supported: ["public"],
         response_types_supported:["code"],
