@@ -50,4 +50,4 @@ redirect_uri: https://example1.com/callback https://example2.com/callback
 
 Done! You can use it in applications that support OAuth2 login.  
 Example:
-![pic](https://hackmd.io/_uploads/SyMDwGiTR.png)
+![pic](https://raw.githubusercontent.com/smallru8/cfworker-discord-oauth2/refs/heads/main/docs/upload_b5b5adda4995f1665ae70a3037bd865e.png)
