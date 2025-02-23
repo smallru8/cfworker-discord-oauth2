@@ -84,6 +84,8 @@ hono_oidc.post('/token', async (c) => {
         client_secret = (body['client_secret'] as string)
     }
 
+    console.log(client_id + " " + client_secret + " " + body['grant_type'] + " " + body['code'] + " " + body['redirect_uri'])
+
     if(!client_id || !client_secret){
         return c.json(new ErrMessage("auth error","client_id or client_secret not found").dict(), 400)
     }
@@ -144,11 +146,13 @@ hono_oidc.post('/token', async (c) => {
         )
         .bind(code)
         .all();
-        return c.json({
+        var ret = c.json({
             ...dc_access_token_resp,
             scope: (results[0].scope as string),
             id_token: idToken
         })
+        console.log(ret)
+        return ret
     }else if(grant_type==="refresh_token"){ // refresh_token, renew id_token and access_token
         let { results } = await c.env.DB.prepare(
             "SELECT client_id, scope FROM oidc_client WHERE client_id = ? AND client_secret = ? LIMIT 1;",
