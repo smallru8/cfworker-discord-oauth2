@@ -147,13 +147,13 @@ hono_oidc.post('/token', async (c) => {
 
         console.log({
             ...dc_access_token_resp,
-            scope: (results[0].scope as string),
+            //scope: (results[0].scope as string),
             id_token: idToken
         })
 
         return c.json({
             ...dc_access_token_resp,
-            scope: (results[0].scope as string),
+            //scope: (results[0].scope as string),
             id_token: idToken
         })
     }else if(grant_type==="refresh_token"){ // refresh_token, renew id_token and access_token
